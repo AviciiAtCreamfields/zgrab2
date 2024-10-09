@@ -19,6 +19,7 @@ type Config struct {
 	LogFileName        string          `short:"l" long:"log-file" default:"-" description:"Log filename, use - for stderr"`
 	Senders            int             `short:"s" long:"senders" default:"1000" description:"Number of send goroutines to use"`
 	Debug              bool            `long:"debug" description:"Include debug fields in the output."`
+	Loglevel           string          `long:"loglevel" default:"info" description:"Set Loglevel: debug, trace, error, warn, fatal, panic"`
 	Flush              bool            `long:"flush" description:"Flush after each line of output."`
 	GOMAXPROCS         int             `long:"gomaxprocs" default:"0" description:"Set GOMAXPROCS"`
 	ConnectionsPerHost int             `long:"connections-per-host" default:"1" description:"Number of times to connect to each host (results in more output)"`
@@ -64,8 +65,20 @@ func validateFrameworkConfiguration() {
 		log.SetOutput(config.logFile)
 	}
 
-	if config.Debug{
+	if config.Loglevel == "debug" {
 		log.SetLevel(log.DebugLevel)
+	} else if config.Loglevel == "trace" {
+		log.SetLevel(log.TraceLevel)
+	} else if config.Loglevel == "warn" {
+		log.SetLevel(log.WarnLevel)
+	} else if config.Loglevel == "error" {
+		log.SetLevel(log.ErrorLevel)
+	} else if config.Loglevel == "fatal" {
+		log.SetLevel(log.FatalLevel)
+	} else if config.Loglevel == "panic" {
+		log.SetLevel(log.PanicLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
 	}
 
 	SetInputFunc(InputTargetsCSV)
